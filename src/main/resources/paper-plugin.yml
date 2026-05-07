@@ -1,0 +1,6 @@
+name: disCoreEmbedded
+version: '1.0-SNAPSHOT'
+main: space.merrioverse.disCoreEmbedded.DisCoreEmbedded
+api-version: '1.21'
+authors: [ Merriolium ]
+description: Embedded style text for DisCoreBot
