@@ -7,6 +7,7 @@ import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import io.github.mrbest2525.disCoreBot.api.DisCoreBotApi;
 import io.github.mrbest2525.disCoreBot.api.event.DisCoreBotRegisterEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,6 +22,7 @@ import java.io.IOException;
 public class eChat implements Listener{
     private final DisCoreEmbedded embedded;
     private final File configFile;
+    private DisCoreBotRegisterEvent register;
     private YamlConfiguration config;
 
     private final NamespacedKey EMBEDDED_CHAT;
@@ -57,7 +59,6 @@ public class eChat implements Listener{
         }
     }
 
-    @EventHandler
     public void onRegister(DisCoreBotRegisterEvent event) {
         event.registerM2D(EMBEDDED_CHAT, config.getString("channel-id"));
     }
@@ -69,7 +70,7 @@ public class eChat implements Listener{
 
         WebhookEmbed embed = new WebhookEmbedBuilder()
                 .setAuthor(new WebhookEmbed.EmbedAuthor("<" + playerName + ">", avatarUrl, null))
-                .setTitle(new WebhookEmbed.EmbedTitle(event.message().toString(), null))
+                .setTitle(new WebhookEmbed.EmbedTitle(PlainTextComponentSerializer.plainText().serialize(event.message()), null))
                 .setColor(0xFFFF00)
                 .build();
         WebhookMessage message = new WebhookMessageBuilder()

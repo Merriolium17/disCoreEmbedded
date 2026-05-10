@@ -15,10 +15,13 @@ public final class DisCoreEmbedded extends JavaPlugin implements Listener {
     private space.merrioverse.disCoreEmbedded.disCoreAddon.eJoinAndLeave addonEmbedJoinAndLeave;
     private space.merrioverse.disCoreEmbedded.disCoreAddon.eChat addonEmbedChat;
     private space.merrioverse.disCoreEmbedded.disCoreAddon.eBoot addonEmbedBoot;
-    @Override
-    public void onEnable() {
-        // Plugin startup logic
-        getServer().getPluginManager().registerEvents(this, this);
+    @EventHandler
+    public void onRegister(DisCoreBotRegisterEvent event) {
+        getLogger().info("Loading DisCoreEmbedded Addons...");
+        addonEmbedBoot.onRegister(event);
+        addonEmbedChat.onRegister(event);
+        addonEmbedJoinAndLeave.onRegister(event);
+        addonEmbedBoot.onEnable();
     }
 
     @Override
@@ -27,9 +30,11 @@ public final class DisCoreEmbedded extends JavaPlugin implements Listener {
         addonEmbedBoot.onDisable();
     }
 
-    @EventHandler
-    public void onServerLoad(ServerLoadEvent event){
-        getLogger().info("Loading DisCoreEmbedded Addons...");
+    @Override
+    public void onEnable(){
+        // Plugin startup logic
+        getServer().getPluginManager().registerEvents(this, this);
+        getLogger().info("Loading DisCoreEmbedded Systems...");
         addonEmbedJoinAndLeave = new eJoinAndLeave(this);
         addonEmbedChat = new eChat(this);
         addonEmbedBoot = new eBoot(this);

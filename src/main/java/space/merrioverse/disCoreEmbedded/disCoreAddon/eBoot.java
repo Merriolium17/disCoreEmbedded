@@ -19,6 +19,8 @@ import java.io.IOException;
 public class eBoot implements Listener {
     private final DisCoreEmbedded embedded;
     private final File configFile;
+
+    private DisCoreBotRegisterEvent register;
     private YamlConfiguration config;
 
     private final NamespacedKey STARTUP_AND_SHUTDOWN;
@@ -55,12 +57,12 @@ public class eBoot implements Listener {
         }
     }
 
-    @EventHandler
     public void onRegister(DisCoreBotRegisterEvent event) {
         event.registerM2D(STARTUP_AND_SHUTDOWN, config.getString("channel-id"));
     }
 
     public void onEnable() {
+
         WebhookEmbed embed = new WebhookEmbedBuilder()
                 .setTitle(new WebhookEmbed.EmbedTitle("起動しました", null))
                 .setFooter(new WebhookEmbed.EmbedFooter("Powered by DisCoreBot",null))

@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.github.mrbest2525:discorebot:v1.0.3")
+    compileOnly("com.github.mrbest2525:discorebot:v1.0.5")
     compileOnly('org.geysermc.floodgate:api:2.2.5-SNAPSHOT')
     compileOnly("io.papermc.paper:paper-api:1.21.11-R0.1-SNAPSHOT")
 }
