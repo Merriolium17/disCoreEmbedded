@@ -4,3 +4,9 @@ main: space.merrioverse.disCoreEmbedded.DisCoreEmbedded
 api-version: '1.21'
 authors: [ Merriolium ]
 description: Embedded style text for DisCoreBot
+dependencies:
+  server:
+    DisCoreBot:
+      load: AFTER
+      required: true
+      join-classpath: true
