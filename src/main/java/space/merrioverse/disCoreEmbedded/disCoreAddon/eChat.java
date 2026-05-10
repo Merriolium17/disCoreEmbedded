@@ -22,9 +22,8 @@ import java.io.IOException;
 public class eChat implements Listener{
     private final DisCoreEmbedded embedded;
     private final File configFile;
-    private DisCoreBotRegisterEvent register;
     private YamlConfiguration config;
-
+    private boolean enabled;
     private final NamespacedKey EMBEDDED_CHAT;
 
     public eChat(DisCoreEmbedded embedded) {
@@ -35,7 +34,8 @@ public class eChat implements Listener{
         loadConfig();
 
         // アドオンが有効設定の場合のみ機能させる
-        if (!config.getBoolean("enabled")) return;
+        enabled = config.getBoolean("enabled");
+        if (!enabled) return;
         embedded.getServer().getPluginManager().registerEvents(this, embedded);
 
     }
@@ -78,6 +78,7 @@ public class eChat implements Listener{
                 .setAvatarUrl(config.getString("icon-url"))
                 .setUsername(config.getString("server-name"))
                 .build();
+        if (!enabled) return;
         DisCoreBotApi.getInstance().sendMessage(EMBEDDED_CHAT, config.getString("channel-id"), message);
     }
 }

@@ -24,11 +24,11 @@ import java.io.IOException;
 public class eJoinAndLeave implements Listener{
     private final DisCoreEmbedded embedded;
     private final File configFile;
-    private DisCoreBotRegisterEvent register;
     private YamlConfiguration config;
     private long[] timeArray;
     private String[] nameArray;
     private FloodgatePlayer onBedrock;
+    private boolean enabled;
 
     private final NamespacedKey EMBEDDED_JOIN_AND_LEAVE;
 
@@ -40,7 +40,8 @@ public class eJoinAndLeave implements Listener{
         loadConfig();
 
         // アドオンが有効設定の場合のみ機能させる
-        if (!config.getBoolean("enabled")) return;
+        enabled = config.getBoolean("enabled");
+        if (!enabled) return;
         embedded.getServer().getPluginManager().registerEvents(this, embedded);
 
     }
@@ -56,6 +57,8 @@ public class eJoinAndLeave implements Listener{
             config.set("channel-id", "0123456789");
             config.set("server-name", "A Minecraft Server");
             config.set("icon-url", "");
+            config.set("join-comment", "接続しました");
+            config.set("leave-comment", "切断されました");
             try {
                 config.save(configFile);
             } catch (IOException e) {
@@ -75,6 +78,7 @@ public class eJoinAndLeave implements Listener{
         String playerName = event.getPlayer().getName();
         String avatarUrl = String.format("https://mc-heads.net/avatar/%s", event.getPlayer().getUniqueId());
         String onDevice;
+        String comment = config.getString("join-comment");
         WebhookEmbed embed;
         int i = 0;
         do {
@@ -111,13 +115,13 @@ public class eJoinAndLeave implements Listener{
                     onDevice = device.toString();
                 }
                 embed = new WebhookEmbedBuilder()
-                        .setAuthor(new WebhookEmbed.EmbedAuthor("<" + playerName + "> 接続しました", avatarUrl, null))
+                        .setAuthor(new WebhookEmbed.EmbedAuthor("<" + playerName + "> " + comment, avatarUrl, null))
                         .setFooter(new WebhookEmbed.EmbedFooter("Bedrock Edition - " + onDevice, null))
                         .setColor(0x00FF00)
                         .build();
             } else {
                 embed = new WebhookEmbedBuilder()
-                        .setAuthor(new WebhookEmbed.EmbedAuthor("<" + playerName + "> 接続しました", avatarUrl, null))
+                        .setAuthor(new WebhookEmbed.EmbedAuthor("<" + playerName + "> " + comment, avatarUrl, null))
                         .setFooter(new WebhookEmbed.EmbedFooter("Java Edition",null))
                         .setColor(0x00FF00)
                         .build();
@@ -127,6 +131,7 @@ public class eJoinAndLeave implements Listener{
                 .setAvatarUrl(config.getString("icon-url"))
                 .setUsername(config.getString("server-name"))
                 .build();
+        if (!enabled) return;
         DisCoreBotApi.getInstance().sendMessage(EMBEDDED_JOIN_AND_LEAVE, config.getString("channel-id"), message);
     }
 
@@ -134,6 +139,7 @@ public class eJoinAndLeave implements Listener{
     public void onQuit(PlayerQuitEvent event) {
         String playerName = event.getPlayer().getName();
         String avatarUrl = String.format("https://mc-heads.net/avatar/%s", event.getPlayer().getUniqueId());
+        String comment = config.getString("leave-comment");
         WebhookEmbed embed;
         int i = 0;
         long online = System.currentTimeMillis();
@@ -161,7 +167,7 @@ public class eJoinAndLeave implements Listener{
             timeString = String.format("接続時間: %d分", minutes);
         } else timeString = "";
         embed = new WebhookEmbedBuilder()
-                .setAuthor(new WebhookEmbed.EmbedAuthor("<" + playerName + "> 切断されました", avatarUrl, null))
+                .setAuthor(new WebhookEmbed.EmbedAuthor("<" + playerName + "> " + comment, avatarUrl, null))
                 .setFooter(new WebhookEmbed.EmbedFooter(timeString,null))
                 .setColor(0xFF0000)
                 .build();
@@ -170,6 +176,7 @@ public class eJoinAndLeave implements Listener{
                 .setAvatarUrl(config.getString("icon-url"))
                 .setUsername(config.getString("server-name"))
                 .build();
+        if (!enabled) return;
         DisCoreBotApi.getInstance().sendMessage(EMBEDDED_JOIN_AND_LEAVE, config.getString("channel-id"), message);
     }
 }

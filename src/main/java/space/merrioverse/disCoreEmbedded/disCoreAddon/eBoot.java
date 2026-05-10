@@ -9,7 +9,6 @@ import club.minnced.discord.webhook.send.WebhookMessageBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import space.merrioverse.disCoreEmbedded.DisCoreEmbedded;
 
@@ -20,8 +19,8 @@ public class eBoot implements Listener {
     private final DisCoreEmbedded embedded;
     private final File configFile;
 
-    private DisCoreBotRegisterEvent register;
     private YamlConfiguration config;
+    private boolean enabled;
 
     private final NamespacedKey STARTUP_AND_SHUTDOWN;
 
@@ -33,7 +32,8 @@ public class eBoot implements Listener {
         loadConfig();
 
         // アドオンが有効設定の場合のみ機能させる
-        if (!config.getBoolean("enabled")) return;
+        enabled = config.getBoolean("enabled");
+        if (!enabled) return;
         embedded.getServer().getPluginManager().registerEvents(this, embedded);
 
     }
@@ -73,6 +73,7 @@ public class eBoot implements Listener {
                 .setAvatarUrl(config.getString("icon-url"))
                 .setUsername(config.getString("server-name"))
                 .build();
+        if (!enabled) return;
         DisCoreBotApi.getInstance().sendMessage(STARTUP_AND_SHUTDOWN, config.getString("channel-id"), message);
     }
 
@@ -87,6 +88,7 @@ public class eBoot implements Listener {
                 .setAvatarUrl(config.getString("icon-url"))
                 .setUsername(config.getString("server-name"))
                 .build();
+        if (!enabled) return;
         DisCoreBotApi.getInstance().sendMessage(STARTUP_AND_SHUTDOWN, config.getString("channel-id"), message);
     }
 }
