@@ -28,6 +28,7 @@ public final class DisCoreEmbedded extends JavaPlugin implements Listener {
     public void onDisable() {
         // Plugin shutdown logic
         addonEmbedBoot.onDisable();
+        getLogger().info("Exiting DisCoreEmbedded Systems...");
     }
 
     @Override
