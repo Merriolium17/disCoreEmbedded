@@ -24,9 +24,11 @@ import java.io.IOException;
 public class eJoinAndLeave implements Listener{
     private final DisCoreEmbedded embedded;
     private final File configFile;
+    private DisCoreBotRegisterEvent register;
     private YamlConfiguration config;
     private long[] timeArray;
     private String[] nameArray;
+    private FloodgatePlayer onBedrock;
 
     private final NamespacedKey EMBEDDED_JOIN_AND_LEAVE;
 
@@ -64,7 +66,6 @@ public class eJoinAndLeave implements Listener{
         }
     }
 
-    @EventHandler
     public void onRegister(DisCoreBotRegisterEvent event) {
         event.registerM2D(EMBEDDED_JOIN_AND_LEAVE, config.getString("channel-id"));
     }
@@ -86,9 +87,8 @@ public class eJoinAndLeave implements Listener{
             }
         } while ( i < 50);
         if (Bukkit.getPluginManager().isPluginEnabled("floodgate")) {
-            Bukkit.getLogger().info("floodgate fined!!");
+            onBedrock = FloodgateApi.getInstance().getPlayer(event.getPlayer().getUniqueId());
         }
-        FloodgatePlayer onBedrock = FloodgateApi.getInstance().getPlayer(event.getPlayer().getUniqueId());
             if (onBedrock != null) {
                 DeviceOs device = onBedrock.getDeviceOs();
                 if (device == DeviceOs.NX) {
@@ -162,6 +162,7 @@ public class eJoinAndLeave implements Listener{
         } else timeString = "";
         embed = new WebhookEmbedBuilder()
                 .setAuthor(new WebhookEmbed.EmbedAuthor("<" + playerName + "> 切断されました", avatarUrl, null))
+                .setFooter(new WebhookEmbed.EmbedFooter(timeString,null))
                 .setColor(0xFF0000)
                 .build();
         WebhookMessage message = new WebhookMessageBuilder()
