@@ -24,6 +24,7 @@ public class eChat implements Listener{
     private final File configFile;
     private YamlConfiguration config;
     private boolean enabled;
+    private boolean thread;
     private final NamespacedKey EMBEDDED_CHAT;
 
     public eChat(DisCoreEmbedded embedded) {
@@ -36,6 +37,8 @@ public class eChat implements Listener{
         // アドオンが有効設定の場合のみ機能させる
         enabled = config.getBoolean("enabled");
         if (!enabled) return;
+        // チャンネルかスレッドかを設定する
+        thread = config.getBoolean("thread-mode");
         embedded.getServer().getPluginManager().registerEvents(this, embedded);
 
     }
@@ -46,6 +49,7 @@ public class eChat implements Listener{
             // デフォルト設定の生成が必要ならここで行う
             config = new YamlConfiguration();
             config.set("enabled", false);
+            config.set("thread-mode", false);
             config.set("channel-id", "0123456789");
             config.set("server-name", "A Minecraft Server");
             config.set("icon-url", "");
@@ -79,6 +83,10 @@ public class eChat implements Listener{
                 .setUsername(config.getString("server-name"))
                 .build();
         if (!enabled) return;
-        DisCoreBotApi.getInstance().sendMessage(EMBEDDED_CHAT, config.getString("channel-id"), message);
+        if (thread) {
+            DisCoreBotApi.getInstance().sendMessage(EMBEDDED_CHAT, null, config.getString("channel-id"), message);
+        } else {
+            DisCoreBotApi.getInstance().sendMessage(EMBEDDED_CHAT, config.getString("channel-id"), null, message);
+        }
     }
 }

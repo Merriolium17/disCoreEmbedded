@@ -29,6 +29,7 @@ public class eJoinAndLeave implements Listener{
     private String[] nameArray;
     private FloodgatePlayer onBedrock;
     private boolean enabled;
+    private boolean thread;
 
     private final NamespacedKey EMBEDDED_JOIN_AND_LEAVE;
 
@@ -41,6 +42,8 @@ public class eJoinAndLeave implements Listener{
 
         // アドオンが有効設定の場合のみ機能させる
         enabled = config.getBoolean("enabled");
+        // チャンネルかスレッドかを設定する
+        thread = config.getBoolean("thread-mode");
         if (!enabled) return;
         embedded.getServer().getPluginManager().registerEvents(this, embedded);
 
@@ -54,6 +57,7 @@ public class eJoinAndLeave implements Listener{
             // デフォルト設定の生成が必要ならここで行う
             config = new YamlConfiguration();
             config.set("enabled", false);
+            config.set("thread-mode", false);
             config.set("channel-id", "0123456789");
             config.set("server-name", "A Minecraft Server");
             config.set("icon-url", "");
@@ -177,6 +181,10 @@ public class eJoinAndLeave implements Listener{
                 .setUsername(config.getString("server-name"))
                 .build();
         if (!enabled) return;
-        DisCoreBotApi.getInstance().sendMessage(EMBEDDED_JOIN_AND_LEAVE, config.getString("channel-id"), message);
+        if (thread) {
+            DisCoreBotApi.getInstance().sendMessage(EMBEDDED_JOIN_AND_LEAVE, null, config.getString("channel-id"), message);
+        } else {
+            DisCoreBotApi.getInstance().sendMessage(EMBEDDED_JOIN_AND_LEAVE, config.getString("channel-id"),null, message);
+        }
     }
 }

@@ -21,6 +21,7 @@ public class eBoot implements Listener {
 
     private YamlConfiguration config;
     private boolean enabled;
+    private boolean thread;
 
     private final NamespacedKey STARTUP_AND_SHUTDOWN;
 
@@ -34,6 +35,8 @@ public class eBoot implements Listener {
         // アドオンが有効設定の場合のみ機能させる
         enabled = config.getBoolean("enabled");
         if (!enabled) return;
+        // チャンネルかスレッドかを設定する
+        thread = config.getBoolean("thread-mode");
         embedded.getServer().getPluginManager().registerEvents(this, embedded);
 
     }
@@ -44,6 +47,7 @@ public class eBoot implements Listener {
             // デフォルト設定の生成が必要ならここで行う
             config = new YamlConfiguration();
             config.set("enabled", false);
+            config.set("thread-mode", false);
             config.set("channel-id", "0123456789");
             config.set("server-name", "A Minecraft Server");
             config.set("icon-url", "");
@@ -89,6 +93,10 @@ public class eBoot implements Listener {
                 .setUsername(config.getString("server-name"))
                 .build();
         if (!enabled) return;
-        DisCoreBotApi.getInstance().sendMessage(STARTUP_AND_SHUTDOWN, config.getString("channel-id"), message);
+        if (thread) {
+            DisCoreBotApi.getInstance().sendMessage(STARTUP_AND_SHUTDOWN, null, config.getString("channel-id"), message);
+        } else {
+            DisCoreBotApi.getInstance().sendMessage(STARTUP_AND_SHUTDOWN, config.getString("channel-id"), null, message);
+        }
     }
 }

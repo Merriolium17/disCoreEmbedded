@@ -1,10 +1,10 @@
 package space.merrioverse.disCoreEmbedded;
 
 import io.github.mrbest2525.disCoreBot.api.event.DisCoreBotRegisterEvent;
+import io.github.mrbest2525.disCoreBot.api.event.DisCoreBotStopEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import space.merrioverse.disCoreEmbedded.disCoreAddon.eBoot;
 import space.merrioverse.disCoreEmbedded.disCoreAddon.eChat;
@@ -25,15 +25,11 @@ public final class DisCoreEmbedded extends JavaPlugin implements Listener {
         addonEmbedBoot.onEnable();
     }
 
-    @EventHandler
-    public void onUnload(WorldUnloadEvent event) {
-        addonEmbedBoot.onDisable();
-    }
-
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        getLogger().info("Exiting DisCoreEmbedded Systems...");
+        addonEmbedBoot.onDisable();
+        getLogger().info("Stopping DisCoreEmbedded Systems...");
     }
 
     @Override
